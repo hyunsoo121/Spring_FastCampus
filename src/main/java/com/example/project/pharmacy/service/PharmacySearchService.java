@@ -1,5 +1,6 @@
 package com.example.project.pharmacy.service;
 
+import com.example.project.pharmacy.cache.PharmacyRedisTemplateService;
 import com.example.project.pharmacy.dto.PharmacyDto;
 import com.example.project.pharmacy.entity.Pharmacy;
 import lombok.AllArgsConstructor;
@@ -13,9 +14,15 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class PharmacySearchService {
-    public final PharmacyRepositoryService pharmacyRepositoryService;
-
+    private final PharmacyRepositoryService pharmacyRepositoryService;
+    private final PharmacyRedisTemplateService pharmacyRedisTemplateService;
     public List<PharmacyDto> searchPharmacyDtoList() {
+
+        List<PharmacyDto> pharmacyDtoList = pharmacyRedisTemplateService.findAll();
+        if(!pharmacyDtoList.isEmpty()) {
+            log.info("redis findAll success!");
+            return pharmacyDtoList;
+        }
 
         return pharmacyRepositoryService.findAll()
                 .stream()
